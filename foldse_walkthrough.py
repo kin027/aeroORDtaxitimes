@@ -1,4 +1,6 @@
-"""FOLD-SE walkthrough on the UCI Adult dataset. Run from this folder: python foldse_walkthrough.py"""
+"""FOLD-SE walkthrough on ORD Arrival On-Time Performance data.
+Run from this folder: python foldse_walkthrough.py
+"""
 
 # ======================================================================
 # STEP 0: Imports and settings
@@ -9,36 +11,53 @@ import requests
 
 from foldse_client import Foldse, split_data, get_scores
 
-SERVER   = 'https://foldse-server.onrender.com'
-RAW_FILE = 'otp_tables/adult.data'  # original UCI file (no header)
-CSV_FILE = 'prepared/adult.csv'            # clean CSV created in step 1
-LABEL    = 'label'                         # name of the target column
-POS_VAL  = '<=50K'                         # the class the rules will describe
-RATIO    = 0.5                             # same meaning as in FOLD-R++
-TAIL     = 5e-3                            # FOLD-SE stopping / pruning threshold (client default)
+SERVER      = 'https://foldse-server.onrender.com'
+RAW_FILE    = 'data/combined_otp.csv'                 # Cleaned source dataset
+CSV_FILE    = 'prepared/cleaned_otp.csv'              # Clean CSV created in step 1
+LABEL       = 'long_taxi_in'                  # Target column name
+POS_VAL     = 'True'                          # Positive class to describe (taxi_in > 14m)
+RATIO       = 0.5                             # Same meaning as in FOLD-R++
+TAIL        = 5e-3                            # Stopping / pruning threshold
+SAMPLE_SIZE = 150000                           # Prevents Render 502 Bad Gateway / OOM
 
 
 # ======================================================================
-# STEP 1: Prepare the Adult data
+# STEP 1: Prepare the OTP data
 # ======================================================================
-COLUMNS = ['age', 'workclass', 'fnlwgt', 'education', 'education_num', 'marital_status',
-           'occupation', 'relationship', 'race', 'sex', 'capital_gain', 'capital_loss',
-           'hours_per_week', 'native_country', 'label']
+def prepare_otp():
+    df = pd.read_csv(RAW_FILE)
+    df.columns = df.columns.str.strip().str.lower()
+    label_col = LABEL.strip().lower()
 
-def prepare_adult():
-    """Raw adult.data -> clean CSV. Returns (categorical columns, numeric columns)."""
-    df = pd.read_csv(RAW_FILE, names=COLUMNS, skipinitialspace=True)
-    df = df.drop(columns=['education'])                       # duplicate of education_num
+    if label_col not in df.columns:
+        raise KeyError(f"Target column '{label_col}' not found. Available: {df.columns.tolist()}")
 
-    features = [c for c in df.columns if c != LABEL]
-    str_attrs = [c for c in features if df[c].dtype == object]        # text  -> categorical
-    num_attrs = [c for c in features if c not in str_attrs]           # numbers -> numeric
+    # Ensure native boolean
+    df[label_col] = df[label_col].astype(bool)
 
-    os.makedirs('prepared', exist_ok=True)
-    df[str_attrs + num_attrs + [LABEL]].to_csv(CSV_FILE, index=False)
+    # Stratified downsample
+    if len(df) > SAMPLE_SIZE:
+        print(f'Downsampling from {len(df):,} to {SAMPLE_SIZE:,} rows for FOLD-SE...')
+        frac = SAMPLE_SIZE / len(df)
+        df = df.groupby(label_col, group_keys=False).sample(frac=frac, random_state=42).reset_index(drop=True)
+
+    # Shuffle data so False and True are mixed throughout the file
+    df = df.sample(frac=1.0, random_state=42).reset_index(drop=True)
+
+    categorical_cols = ['day_of_week', 'op_carrier', 'month']
+    for col in categorical_cols:
+        if col in df.columns:
+            df[col] = df[col].astype(str).str.strip()
+
+    features = [c for c in df.columns if c != label_col]
+    str_attrs = [c for c in features if c in categorical_cols]
+    num_attrs = [c for c in features if c not in categorical_cols]
+
+    os.makedirs(os.path.dirname(CSV_FILE) or '.', exist_ok=True)
+    df[str_attrs + num_attrs + [label_col]].to_csv(CSV_FILE, index=False)
 
     print(f'rows={len(df)}  categorical={len(str_attrs)}  numeric={len(num_attrs)}')
-    print('label counts:', df[LABEL].value_counts().to_dict())
+    print('label counts:', df[label_col].value_counts().to_dict())
     return str_attrs, num_attrs
 
 
@@ -48,7 +67,7 @@ def prepare_adult():
 def load_and_split(model):
     """Parse the CSV locally and split 80/20."""
     data = model.load_data(CSV_FILE)
-    train, test = split_data(data, ratio=0.8, rand=False)
+    train, test = split_data(data, ratio=0.8, rand=True)
     print(f'train={len(train)}  test={len(test)}')
     print('first row:', {k: train[0][k] for k in list(train[0])[:5]}, '...')
     return train, test
@@ -102,10 +121,18 @@ def show_rules(model):
 # ======================================================================
 # STEP 6: Evaluate on the test set
 # ======================================================================
+# ======================================================================
+# STEP 6: Evaluate on the test set
+# ======================================================================
 def evaluate_model(model, test):
     """Accuracy / precision / recall / F1 on the held-out rows."""
-    preds = model.predict(test)
-    truth = [x['label'] for x in test]
+    raw_preds = model.predict(test)
+    raw_truth = [x['label'] for x in test]
+
+    # Convert predictions and ground truth strictly to list[bool] for get_scores
+    preds = [bool(p) if not isinstance(p, str) else p.strip().lower() in ('true', '1') for p in raw_preds]
+    truth = [bool(t) if not isinstance(t, str) else t.strip().lower() in ('true', '1') for t in raw_truth]
+
     acc, prec, rec, f1 = get_scores(preds, truth)
     print(f'accuracy={acc:.4f}  precision={prec:.4f}  recall={rec:.4f}  f1={f1:.4f}')
     return acc
@@ -115,14 +142,14 @@ def evaluate_model(model, test):
 # STEP 7: Run everything
 # ======================================================================
 def main():
-    str_attrs, num_attrs = prepare_adult()                    # step 1
+    str_attrs, num_attrs = prepare_otp()                      # step 1
     model = Foldse(str_attrs, num_attrs, LABEL, POS_VAL)
     train, test = load_and_split(model)                       # step 2
-    print('\n--- server ---'); wake_server()                 # step 3
-    print('\n--- training ---')                                # step 4
+    print('\n--- server ---'); wake_server()                  # step 3
+    print('\n--- training ---')                                 # step 4
     if not train_model(model, train):
         return
-    print(); show_rules(model)                                # step 5
+    print(); show_rules(model)                                 # step 5
     print('\n--- evaluation ---'); evaluate_model(model, test)  # step 6
 
 if __name__ == '__main__':
