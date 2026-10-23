@@ -1,7 +1,3 @@
-"""FOLD-SE walkthrough on ORD Arrival On-Time Performance data.
-Run from this folder: python foldse_walkthrough.py
-"""
-
 # ======================================================================
 # STEP 0: Imports and settings
 # ======================================================================
@@ -152,5 +148,4 @@ def main():
     print(); show_rules(model)                                 # step 5
     print('\n--- evaluation ---'); evaluate_model(model, test)  # step 6
 
-if __name__ == '__main__':
-    main()
+main()

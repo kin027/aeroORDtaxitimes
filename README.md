@@ -1,24 +1,52 @@
-# AeroGap Analyzer
+# AeroORDTaxi
 
 ## Overview
 
-A Python tool that analyzes 2025-2026 Bureau of Transportation Statistics (BTS) data to identify top unserved airline O&D (origin & destination) markets with high passenger demand.
+A Python implementation of FOLD-SE, an explainable rule-learning algorithm, used on 2025 Bureau of Transportation Statistics (BTS) to learn rules and exceptions for long taxi times for arrivals at ORD.
 
 ### Why I Built This
 
-I'm an avgeek (aviation enthusiast) and data nerd. While I love to take connecting flights even when nonstop service exists ([I once flew DFW to ABQ via... ORD](https://my.flightradar24.com/kin_on_a_plane)), I'm also aware that many passengers in the system are forced to connect simply because nonstop options don't exist.
+I'm an avgeek (aviation enthusiast) and data nerd. At the conclusion of each flight I take, I like a long taxi in from the runway to the gate if it involves a bit of a tour of the airport. However, even I would get bored (or angsty if I'm trying to make a connection) if I start making circles around an airport.
 
-This reality hits me every time I look around the cabin while munching on my obligatory [inflight fruit and cheese plate](https://news.alaskaair.com/alaska-airlines/most-popular-fruit-cheese-platters-national-cheese-day-2021/). I always wonder where the other passengers on my flights connect to or from, especially if a consistent stream of passengers on the same flight all want to reach the same unserved destination, but can't and instead are forced to take [_Tour de O'Hare_](https://www.reddit.com/r/unitedairlines/comments/1uup4bw/first_lap_of_the_ord_500_almost_complete_think_we/) while they connect in Chicago. To me, finding those nonstop service gaps is true food for thought (although the Tillamook sharp cheddar is also pretty good).
+Unfortunately, that's the reality at Chicago-O'Hare International Airport (ORD), where it's [very possible to literally taxi in a circle around the terminals](https://www.reddit.com/r/unitedairlines/comments/1uup4bw/first_lap_of_the_ord_500_almost_complete_think_we/). ORD is infamous among the road warriors for its long taxi times to the point where they call it the _Tour de O'Hare_.
+
+I was curious about the factors that could cause an arrival into ORD to have a long taxi time (defined in the program as being longer than 14 minutes), so I used the FOLD-SE algorithm to see if any rules would appear. (To be clear, this program doesn't predict flight delays, just whether a flight into ORD will have a long taxi into its arrival gate.)
 
 ### Key Insights
 
-The difference between a profitable airline and one facing bankruptcy could simply be in network planning. Unserved O&D markets may present significant opportunities, especially if one end of the market is an airline hub.
+I wasn't that surprised by the results (which may vary as you run it). Here's one:
 
-When I ran my analysis on my home airport of Portland (PDX), a rapidly expanding hub for Alaska Airlines, unlike some others for the airline (_cough cough_ SFO), it revealed that two of the top unserved markets from Portland during certain months were Philadelphia and St. Louis. Honestly, I was surprised that we didn't have nonstop service to those cities, but that is no longer the case. I'm guessing the network planners at Alaska knew about this too, because in May 2026, [the airline launched new nonstop flights to Philly and St. Louis](https://news.alaskaair.com/destinations/alaska-airlines-adds-13-new-routes/), so those markets fell off the graph in May.
+```
+long_taxi_in(X,'True') :- crs_arr_time(X,N1), N1>1748.0, N1=<2144.0.
+```
 
-Of course, network planners evaluate factors beyond demand to justify new routes, but I just thought it was cool to see a major airline act on the same unserved markets that my analysis found. And it's also a great time to be a PDX-based Alaska flyer, of which I am one. (Did I mention those fruit and cheese plates?) ✈️
+That just means that the model predicts that a flight will have a long taxi time if has a scheduled arrival time from 5:48 PM to 9:44 PM. That, of course, makes sense due to the evening banks of flights that American and United (the two carriers that make ORD a hub) have, plus the effects of any snafus earlier in the day cascading down to the evening.
 
-**Try the AeroGap Analyzer out with your home airport to discover where people are going that airlines aren't!**
+Here's another:
+
+```
+long_taxi_in(X,'True') :- not month(X,'1'), not month(X,'2'), not month(X,'3'), not month(X,'10'), not op_carrier(X,'AA'), not month(X,'9'), not day_of_week(X,'Wednesday'), not op_carrier(X,'NK'), not op_carrier(X,'F9'), not month(X,'12'), not month(X,'11'), not day_of_week(X,'Thursday'), not day_of_week(X,'Tuesday'), not day_of_week(X,'Saturday'), crs_arr_time(X,N1), N1>1300.0, N1=<1748.0, distance(X,N2), N2>235.0, N2=<1730.0.
+```
+
+There's a lot to unpack here, but it basically boils down to the model predicting that a flight that: 
+
+- Is during the summer months
+- Is on a peak travel day 
+- Is not on American, Spirit (RIP, I used 2025 data), or Frontier
+- Is scheduled to arrive in the afternoon
+- Has a flight distance (in miles) in the range (235, 1730]
+
+will experience a long taxi time at O'Hare. This makes sense mainly because of airport congestion during busy travel times.
+
+Here's an interesting one:
+
+```
+long_taxi_in(X,'True') :- not month(X,'1'), not month(X,'10'), not month(X,'2'), not month(X,'3'), crs_arr_time(X,N1), N1>725.0, N1=<1000.0, distance(X,N2), not(N2=<235.0), wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0).
+```
+
+I'm particularly interested in the `wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0)` rule. Besides the other conditions for this rule, this one means that if a flight lands at least 12 minutes ahead of its scheduled arrival time, it would have a long taxi time. This is the classic "landing early but your gate is still occupied" situation that nobody likes. When this happens at ORD, planes often just taxi to the central de-icing facility (affectionately known as the penalty box) and chill until their gate opens up (or gets reassigned to a different gate). However, the taxi time clock is still ticking for every second an aircraft spends in the penalty box.
+
+I suppose these rules would be helpful in informing you when booking your next connection through ORD, so you can keep your taxi times down. Or, for me, I guess to experience the _Tour de O'Hare_ myself. My last taxi into a gate at ORD surprisingly took only 11 minutes. ✈️
 
 ## Getting Started
 
@@ -27,8 +55,8 @@ Make sure you have Python 3.13 or higher installed.
 1. Clone this repository:
 
 ```bash
-git clone https://github.com/kin027/aerogap.git
-cd aerogap
+git clone https://github.com/kin027/aeroORDtaxi.git
+cd aeroORDtaxi
 ```
 
 2. Create a virtual environment:
@@ -62,67 +90,32 @@ python main.py
 
 ## Libraries Used
 
-- pandas (to analyze the T-100 and DB1C tables)
+- pandas (to analyze the OTP tables, and process the data for the algorithm)
 
-- plotly (to design the graph)
+- requests (to call the server)
 
-- dash (to make the graph interactive with the slider)
-
-- pywebview (to open a new window to show the graph in)
-
-- Tkinter (to create the GUI)
-
-- threading (to allow concurrent execution)
+- cryptography
 
 ## Data Sources
 
-I downloaded data from the Bureau of Transportation Statistics (BTS), a part of the U.S. Department of Transportation. Airlines report their traffic data to the BTS each month.
+I downloaded data from the Bureau of Transportation Statistics (BTS), a part of the U.S. Department of Transportation. Airlines report their on-time performance data to the BTS each month.
 
-- [BTS Airline Origin and Destination Survey (DB1C) Market table](https://www.bts.gov/topics/airlines-and-airports/origin-and-destination-survey-data-market)
-  - Provides detailed ticket information from a 40% random sample of all U.S. domestic flown airline tickets (typically selected by ticket numbers ending in 0, 2, 7, or 9)
-  - Released monthly with a 75-day lag to ensure data quality
-  - I used data from July 2025 to May 2026
-
-- [BTS Air Carrier Statistics (Form 41 Traffic) T-100 Domestic Segment (All Carriers) table](https://www.transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EEE)
-  - Identifies airport pairs connected with a nonstop flight
+- [BTS Reporting Carrier On-Time Performance (1987-present) table](https://www.transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD&Yv0x=D)
+  - Provides detailed on-time performance info for every domestic scheduled passenger flight in the U.S.
   - Released monthly with a 2-3 month lag to ensure data quality
-  - I included the DepScheduled, Seats, Origin, OriginCityMarketID, Dest, DestCityMarketID, Year, Month, and Class columns and used data from January 2025 to May 2026
-
-### Note About the Data
-
-When I first stumbled upon the Bureau of Transportation Statistics (BTS) DB1B data tables, I knew that I just needed to pair them with T-100 tables to identify those unserved markets. I tried to use data from 2025, the most recent full year since I started this, but the tables for the second half of the year were nowhere to be found, so I had to settle for 2024 data.
-
-A bit of digging revealed that DB1B data for the second half of 2025 never existed to begin with. The Biden administration [overhauled airline reporting requirements in 2023](https://www.federalregister.gov/documents/2023/01/31/2022-28535/updates-to-the-origin-destination-survey-of-airline-passengers), and those upgrades went live in July 2025, replacing the DB1B with a newer, more robust table: the DB1C. The new data is so much more comprehensive that mixing it with the old data would skew the results, so I’m using data exclusively from July 2025 onward.
-
-While more data is good for me to play around with, it's probably not good for my machine. Each monthly file would be massive if I saved them as CSVs. Like 6 GB massive. With six months of data here, there was no way I was going to store 36 GB of CSVs on my disk. Luckily, the download link also included an option to save the data as parquets, reducing the total size of the DB1C tables down to 3 GB, or 500 MB per monthly file. As that is still too large for GitHub, I have a helper script, DB1C_merger.py, read from each file only seven of the [54](https://www.bts.gov/sites/bts.dot.gov/files/DB1C_Description_for_Market.pdf) (!) columns that I need and concatenate them into a final_db1c.csv, which is located in the root folder.
+  - I used data from January 2025 to December 2025
 
 ## Limitations
 
-- Raw demand per se does not justify a new route
-  - So you should be cautious with drawing network planning conclusions from this analysis
-  - Other factors to consider include fares, seasonality, operational constraints, opportunity cost of sending the aircraft elsewhere, cannibalism of traffic on existing routes, etc.
+- The data does not include a rather important feature: arrival runway
+  - So that is not a possible predicate in this analysis
+  - (If you land on runway 27R, you might want to get another movie ready though...)
 
-- While the ticket sample size increased from the DB1B's 10% to the DB1C's 40%, passenger counts are still scaled approximations rather than precise figures
-  - So smaller regional routes have wider margins of error (though the increase in sample size was designed to mitigate this)
-
-- The data is not real time
-  - So my analysis represents a historical snapshot as opposed to active booking trends
-
-- The public DB1C tables include only U.S. domestic traffic
+- The OTP tables include only U.S. domestic traffic
   - So my analysis evaluates U.S. domestic traffic only
-  - The BTS has Airline Origin and Destination Survey data for U.S. international traffic, but considers it as restricted data, [meaning that it must be requested directly from them](https://www.bts.gov/topics/airlines-and-airports/restricted-data)
-
-## Future Improvement Plans
-
-- ~~Allowing filtering the data by month to highlight seasonality~~ (Implemented!)
-
-- ~~Showing the airport name upon hover of a bar~~ (Implemented!)
-
-- Formatting the slider better (e.g. with the tooltip)
-
 
 ## References
 
-- Wang & Gupta, *FOLD-R++: A Scalable Toolset for Automated Inductive Learning of Default Theories from Mixed Data*, FLOPS 2022.
-- Wang & Gupta, *FOLD-SE: an efficient rule-based machine learning algorithm with scalable explainability*, PADL 2024.
+- Wang & Gupta, _FOLD-R++: A Scalable Toolset for Automated Inductive Learning of Default Theories from Mixed Data_, FLOPS 2022.
+- Wang & Gupta, _FOLD-SE: an efficient rule-based machine learning algorithm with scalable explainability_, PADL 2024.
 - Code: https://github.com/hwd404/FOLD-R-PP and https://github.com/hwd404/foldse_client
