@@ -55,13 +55,13 @@ I suppose these rules would be helpful in informing you when booking your next c
 <details>
 <summary>Setup and execution instructions</summary>
 
-Have Python 3.13+ installed on your machine. You do not need to download any data, as I've already included the necessary data in this repo.
+Have Python 3.13+ installed on your machine. You do not need to download any data, as I've already included the relevant data in this repo.
 
 ```bash
 git clone https://github.com/kin027/aeroORDtaxitimes.git
 cd aeroORDtaxitimes
 
-# Create the environment
+# Create the virtual environment
 python -m venv venv
 
 # Activate it
