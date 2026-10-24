@@ -56,7 +56,7 @@ long_taxi_in(X,'True') :- not month(X,'1'), not month(X,'10'), not month(X,'2'),
 
 I'm particularly interested in the `wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0)` predicate for this rule. It means that if a flight lands more than 12 minutes ahead of its scheduled gate arrival time and the other predicates also hold, then FOLD-SE predicts that it would have a long taxi time. This is the classic "landing early but your gate is still occupied" situation that nobody likes. When this happens at O'Hare, inbound aircraft often get sent to the central de-icing facility, affectionately known as the "penalty box", to chill until their gate opens up or gets reassigned. But while the aircraft sits in timeout, the taxi-in clock keeps ticking away.
 
-There are more rules beyond this, and I suppose these rules would be helpful in informing you when booking your next connection through ORD, so you can keep your taxi times down. Or, if you're like me, to maximize your chance of experiencing the _Tour de O'Hare_ yourself. (My last taxi in at ORD took only 11 minutes. I feel robbed, but also my flight didn't fit any of the rules FOLD-SE generated.) ✈️
+There are more rules beyond this, and I suppose these rules would be helpful in informing you when booking your next connection through ORD, so you can keep your taxi times down. Or, if you're like me, to maximize your chance of experiencing the _Tour de O'Hare_ yourself. (My last taxi in at ORD took only 11 minutes. I feel robbed, but also my flight didn't adhere to any of the rules that FOLD-SE generated.) ✈️
 
 ## Getting Started
 
