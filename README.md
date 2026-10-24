@@ -12,7 +12,7 @@ I'm an avgeek (aviation enthusiast) and data nerd. At the conclusion of each fli
 
 Unfortunately, that's the reality at Chicago-O'Hare International Airport (ORD), where it's very possible to [literally taxi in a circle around the terminals](https://www.reddit.com/r/unitedairlines/comments/1uup4bw/first_lap_of_the_ord_500_almost_complete_think_we/). ORD is infamous among the frequent flyers for its ridiculously long taxi times.
 
-So, when I first learned about the FOLD-SE algorithm, I knew I had to try it out on the BTS's airline on-time performance data to explore the combination of factors that could cause an arrival into ORD to have a long taxi time, **which I defined in the program as being longer than 14 minutes**.
+So, when I first learned about the FOLD-SE algorithm, I knew I had to try it out on the BTS's airline on-time performance (OTP) data to explore the combination of factors that could cause an arrival into ORD to have a long taxi time, **which I defined in the program as being longer than 14 minutes**.
 
 ### Key Insights
 
@@ -24,7 +24,7 @@ The learned rules are expressed in Answer Set Programming (ASP) / Prolog syntax,
 
 - `not` represents an exception or negation
 
-Features for the generated rules include a flight's:
+The features in the OTP data include a flight's:
 
 - Departure month (`month`)
 
