@@ -103,12 +103,16 @@ I downloaded data from the Bureau of Transportation Statistics (BTS), a part of 
 
 ## Limitations
 
-- The data lacks a rather important feature: arrival runway
-  - So arrival runway cannot be generated as an explanatory predicate
+- The data lacks a couple important features: arrival runway and arrival terminal
+  - So those cannot be generated as an explanatory predicate
   - (If you land on runway 9L/27R, you might want to get another movie ready, though...)
 
 - The OTP tables include only U.S. domestic flights
   - So my analysis evaluates U.S. domestic flights only
+
+## Future Improvement Plans
+
+- Using the aircraft registration column in the OTP data to get ICAO aircraft types to use that as a predicate
 
 ## References
 
