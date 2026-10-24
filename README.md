@@ -16,9 +16,15 @@ So, when I first learned about the FOLD-SE algorithm, I knew I had to try it out
 
 ### Key Insights
 
-I wasn't actually that surprised by the rules that were generated (which may vary as you run it). Here's one:
+The learned rules are expressed in Answer Set Programming (ASP) / Prolog syntax, which reads as IF–THEN logic with exceptions:
 
-```
+- `:-` means "IF" (the left side is true if the conditions on the right are met)
+- `,` means "AND"
+- `not` represents an exception or negation
+
+As for the rules themselves, I wasn't actually that surprised by them (which may vary as you run it). Here's one:
+
+```prolog
 long_taxi_in(X,'True') :- crs_arr_time(X,N1), N1>1748.0, N1=<2144.0.
 ```
 
@@ -26,7 +32,7 @@ That just means that FOLD-SE predicts that a flight will have a long taxi time i
 
 Here's another:
 
-```
+```prolog
 long_taxi_in(X,'True') :- not month(X,'1'), not month(X,'2'), not month(X,'3'), not month(X,'10'), not op_carrier(X,'AA'), not month(X,'9'), not day_of_week(X,'Wednesday'), not op_carrier(X,'NK'), not op_carrier(X,'F9'), not month(X,'12'), not month(X,'11'), not day_of_week(X,'Thursday'), not day_of_week(X,'Tuesday'), not day_of_week(X,'Saturday'), crs_arr_time(X,N1), N1>1300.0, N1=<1748.0, distance(X,N2), N2>235.0, N2=<1730.0.
 ```
 
@@ -42,7 +48,7 @@ There's a lot to unpack here, but it basically boils down to FOLD-SE predicting 
 
 Here's an intriguing one:
 
-```
+```prolog
 long_taxi_in(X,'True') :- not month(X,'1'), not month(X,'10'), not month(X,'2'), not month(X,'3'), crs_arr_time(X,N1), N1>725.0, N1=<1000.0, distance(X,N2), not(N2=<235.0), wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0).
 ```
 
