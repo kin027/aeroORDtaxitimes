@@ -120,7 +120,7 @@ I downloaded data from the Bureau of Transportation Statistics (BTS), a part of 
 
 ## Future Improvement Plans
 
-- Using the aircraft registration column in the OTP data to get ICAO aircraft types to use that as a predicate
+- Using the aircraft registration column in the OTP data to get ICAO aircraft types to use that as a feature
 
 ## References
 
