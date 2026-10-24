@@ -19,8 +19,26 @@ So, when I first learned about the FOLD-SE algorithm, I knew I had to try it out
 The learned rules are expressed in Answer Set Programming (ASP) / Prolog syntax, which reads as IF–THEN logic with exceptions:
 
 - `:-` means "IF" (the left side is true if the conditions on the right are met)
+
 - `,` means "AND"
+
 - `not` represents an exception or negation
+
+Features for the generated rules include a flight's:
+
+- Departure month (`month`)
+
+- Departure day of the week (`day_of_week`)
+
+- Operating carrier (`op_carrier`)
+
+- Gate departure delay, minutes (`dep_delay`)
+
+- Scheduled gate arrival time as an integer (`crs_arr_time`)
+
+- Distance, miles (`distance`)
+
+- Duration from wheels on to scheduled gate arrival time, minutes (`wheels_on_to_crs_arr_time,long_taxi_in`)
 
 As for the rules themselves, I wasn't actually that surprised by them (which may vary as you run it). Here's one:
 
@@ -33,28 +51,12 @@ That just means that FOLD-SE predicts that a flight will have a long taxi time i
 Here's another:
 
 ```prolog
-long_taxi_in(X,'True') :- not month(X,'1'), not month(X,'2'), not month(X,'3'), not month(X,'10'), not op_carrier(X,'AA'), not month(X,'9'), not day_of_week(X,'Wednesday'), not op_carrier(X,'NK'), not op_carrier(X,'F9'), not month(X,'12'), not month(X,'11'), not day_of_week(X,'Thursday'), not day_of_week(X,'Tuesday'), not day_of_week(X,'Saturday'), crs_arr_time(X,N1), N1>1300.0, N1=<1748.0, distance(X,N2), N2>235.0, N2=<1730.0.
-```
-
-There's a lot to unpack here, but it basically boils down to FOLD-SE predicting that if a flight meets all of the following conditions...
-
-- Is during the summer months
-- Is on a peak travel day
-- Is not on American, Spirit (RIP, I used 2025 data), or Frontier
-- Is scheduled to arrive in the afternoon
-- Is 235 to 1730 miles in distance
-
-...it will experience a long taxi time at O'Hare. This makes sense because of airport congestion during busy travel times (although I was a bit surprised to see that American was an exception).
-
-Here's an intriguing one:
-
-```prolog
 long_taxi_in(X,'True') :- not month(X,'1'), not month(X,'10'), not month(X,'2'), not month(X,'3'), crs_arr_time(X,N1), N1>725.0, N1=<1000.0, distance(X,N2), not(N2=<235.0), wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0).
 ```
 
 I'm particularly interested in the `wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0)` predicate for this rule. It means that if a flight lands more than 12 minutes ahead of its scheduled gate arrival time, FOLD-SE predicts that it would have a long taxi time. This is the classic "landing early but your gate is still occupied" situation that nobody likes. When this happens at O'Hare, inbound aircraft often get sent to the central de-icing facility, affectionately known as the "penalty box", to chill until their gate opens up or gets reassigned. But while the aircraft sits in timeout, the taxi-in clock keeps ticking away.
 
-I suppose these rules would be helpful in informing you when booking your next connection through ORD, so you can keep your taxi times down. Or, if you're like me, to maximize your chance of experiencing the _Tour de O'Hare_ yourself. (My last taxi in at ORD took only 11 minutes. I feel robbed, but also my flight didn't fit any of the rules FOLD-SE generated.) ✈️
+There are more rules beyond this, and I suppose these rules would be helpful in informing you when booking your next connection through ORD, so you can keep your taxi times down. Or, if you're like me, to maximize your chance of experiencing the _Tour de O'Hare_ yourself. (My last taxi in at ORD took only 11 minutes. I feel robbed, but also my flight didn't fit any of the rules FOLD-SE generated.) ✈️
 
 ## Getting Started
 
