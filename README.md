@@ -111,6 +111,5 @@ I downloaded data from the Bureau of Transportation Statistics (BTS), a part of 
 
 ## References
 
-- Wang & Gupta, _FOLD-R++: A Scalable Toolset for Automated Inductive Learning of Default Theories from Mixed Data_, FLOPS 2022.
 - Wang & Gupta, _FOLD-SE: an efficient rule-based machine learning algorithm with scalable explainability_, PADL 2024.
-- Code: https://github.com/hwd404/FOLD-R-PP and https://github.com/hwd404/foldse_client
+  - Code: https://github.com/hwd404/foldse_client
