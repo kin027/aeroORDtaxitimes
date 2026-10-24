@@ -53,7 +53,9 @@ I suppose these rules would be helpful in informing you when booking your next c
 ## Getting Started
 
 <details>
-<summary><b>Setup and Execution Instructions</b></summary>
+<summary>Setup and execution instructions</summary>
+
+Have Python 3.13+ installed on your machine. You do not need to download any data, as I've already included the necessary data in this repo.
 
 ```bash
 git clone https://github.com/kin027/aeroORDtaxitimes.git
@@ -62,14 +64,15 @@ cd aeroORDtaxitimes
 # Create the environment
 python -m venv venv
 
-# Activate it:
-# On macOS and Linux:
+# Activate it
+
+# On macOS and Linux
 source venv/bin/activate
 
-# On Windows (Command Prompt):
+# On Windows (Command Prompt)
 venv\Scripts\activate
 
-# On Windows (PowerShell):
+# On Windows (PowerShell)
 .\venv\Scripts\Activate.ps1
 
 # Install dependencies
