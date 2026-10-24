@@ -103,8 +103,8 @@ I downloaded data from the Bureau of Transportation Statistics (BTS), a part of 
 
 ## Limitations
 
-- The data lacks a couple important features: arrival runway and arrival terminal
-  - So those cannot be generated as an explanatory predicate
+- The data does not include two important features: arrival runway and arrival terminal
+  - So those cannot be generated as explanatory predicates
   - (If you land on runway 9L/27R, you might want to get another movie ready, though...)
 
 - The OTP tables include only U.S. domestic flights
