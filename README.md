@@ -2,9 +2,9 @@
 
 ## Overview
 
-A Python implementation of FOLD-SE, an explainable rule-learning algorithm, used on 2025 Bureau of Transportation Statistics (BTS) data to learn rules and exceptions that predict whether a flight into ORD will have a long taxi time to its arrival gate.
+A Python implementation of FOLD-SE, an explainable rule-learning algorithm, used on 2025 Bureau of Transportation Statistics (BTS) data to learn rules that predict whether a flight into ORD will have a long taxi to its arrival gate after it lands.
 
-(To be clear, this program doesn't predict flight delays. A flight that lands early or on time may still have a long taxi time to its arrival gate at ORD.)
+(To be clear, this program doesn't predict flight delays for arrivals into ORD. A flight that lands early may still have a long taxi to its arrival gate.)
 
 ### Why I Built This
 
@@ -12,7 +12,7 @@ I'm an avgeek (aviation enthusiast) and data nerd. At the conclusion of each fli
 
 Unfortunately, that's the reality at Chicago-O'Hare International Airport (ORD), where it's very possible to [literally taxi in a circle around the terminals](https://www.reddit.com/r/unitedairlines/comments/1uup4bw/first_lap_of_the_ord_500_almost_complete_think_we/). ORD is infamous among the frequent flyers for its ridiculously long taxi times.
 
-So, when I first learned about the FOLD-SE algorithm, I knew I had to try it out on the BTS's airline on-time performance (OTP) data to explore the combination of factors that could cause an arrival into ORD to have a long taxi time, **which I defined in the program as being longer than 14 minutes**.
+So, when I first learned about the FOLD-SE algorithm, I knew I had to try it out on the BTS's airline on-time performance (OTP) data to explore the combination of factors that could cause an arrival into ORD to have a long taxi, **which I defined in the program as being longer than 14 minutes**.
 
 ### Key Insights
 
@@ -38,15 +38,15 @@ The features in the OTP data include a flight's:
 
 - Distance, miles (`distance`)
 
-- Duration from wheels on to scheduled gate arrival time, minutes (`wheels_on_to_crs_arr_time,long_taxi_in`)
+- Duration from wheels on to scheduled gate arrival time, minutes (`wheels_on_to_crs_arr_time`)
 
-As for the rules themselves, I wasn't actually that surprised by them (which may vary as you run it). Here's one:
+As for the rules themselves, I wasn't actually that surprised by them (which may vary for you as you run it). Here's one:
 
 ```prolog
 long_taxi_in(X,'True') :- crs_arr_time(X,N1), N1>1748.0, N1=<2144.0.
 ```
 
-That just means that FOLD-SE predicts that a flight will have a long taxi time if it has a scheduled gate arrival time from 5:48 PM to 9:44 PM. That, of course, makes sense due to the evening banks of flights that American and United (the two carriers that make ORD a hub) have, plus the effects of any snafus earlier in the day cascading down to the evening.
+So FOLD-SE predicts that a flight will have a long taxi time if it has a scheduled gate arrival time from 5:48 PM to 9:44 PM. That, of course, makes sense due to the evening banks of flights that American and United (the two carriers that make ORD a hub) have, plus the effects of any snafus earlier in the day cascading down to the evening.
 
 Here's another:
 
@@ -54,7 +54,7 @@ Here's another:
 long_taxi_in(X,'True') :- not month(X,'1'), not month(X,'10'), not month(X,'2'), not month(X,'3'), crs_arr_time(X,N1), N1>725.0, N1=<1000.0, distance(X,N2), not(N2=<235.0), wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0).
 ```
 
-I'm particularly interested in the `wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0)` predicate for this rule. It means that if a flight lands more than 12 minutes ahead of its scheduled gate arrival time, FOLD-SE predicts that it would have a long taxi time. This is the classic "landing early but your gate is still occupied" situation that nobody likes. When this happens at O'Hare, inbound aircraft often get sent to the central de-icing facility, affectionately known as the "penalty box", to chill until their gate opens up or gets reassigned. But while the aircraft sits in timeout, the taxi-in clock keeps ticking away.
+I'm particularly interested in the `wheels_on_to_crs_arr_time(X,N3), not(N3=<12.0)` predicate for this rule. It means that if a flight lands more than 12 minutes ahead of its scheduled gate arrival time and the other predicates also hold, then FOLD-SE predicts that it would have a long taxi time. This is the classic "landing early but your gate is still occupied" situation that nobody likes. When this happens at O'Hare, inbound aircraft often get sent to the central de-icing facility, affectionately known as the "penalty box", to chill until their gate opens up or gets reassigned. But while the aircraft sits in timeout, the taxi-in clock keeps ticking away.
 
 There are more rules beyond this, and I suppose these rules would be helpful in informing you when booking your next connection through ORD, so you can keep your taxi times down. Or, if you're like me, to maximize your chance of experiencing the _Tour de O'Hare_ yourself. (My last taxi in at ORD took only 11 minutes. I feel robbed, but also my flight didn't fit any of the rules FOLD-SE generated.) ✈️
 
@@ -112,7 +112,7 @@ I downloaded data from the Bureau of Transportation Statistics (BTS), a part of 
 ## Limitations
 
 - The data does not include two important features: arrival runway and arrival terminal
-  - So those cannot be generated as explanatory predicates
+  - So those cannot be generated as predicates
   - (If you land on runway 9L/27R, you might want to get another movie ready, though...)
 
 - The OTP tables include only U.S. domestic flights
