@@ -2,7 +2,7 @@
 
 ## Overview
 
-A Python implementation of FOLD-SE, an explainable rule-learning algorithm, used on 2025 Bureau of Transportation Statistics (BTS) data to learn rules that predict whether a flight into ORD will have a long taxi to its arrival gate after it lands.
+A Python implementation of FOLD-SE, a rule-based explainable machine learning algorithm, used on 2025 Bureau of Transportation Statistics (BTS) data to learn rules that predict whether a flight into ORD will have a long taxi to its arrival gate after it lands.
 
 (To be clear, this program doesn't predict flight delays for arrivals into ORD. A flight that lands early may still have a long taxi to its arrival gate.)
 
