@@ -40,7 +40,7 @@ The features in the OTP data include a flight's:
 
 - Duration from wheels on to scheduled gate arrival time, minutes (`wheels_on_to_crs_arr_time`)
 
-As for the rules themselves, I wasn't actually that surprised by them (which may vary for you as you run it). Here's one:
+As for the rules themselves, I wasn't actually that surprised by them. They may vary for you each time you run it as the training and testing data are randomly split upon each run. Here's one:
 
 ```prolog
 long_taxi_in(X,'True') :- crs_arr_time(X,N1), N1>1748.0, N1=<2144.0.
@@ -66,6 +66,7 @@ There are more rules beyond this, and I suppose these rules would be helpful in 
 Have Python 3.13+ installed on your machine. You do not need to download any data, as I've already included the relevant data in this repo.
 
 ```bash
+# Clone the repo
 git clone https://github.com/kin027/aeroORDtaxitimes.git
 cd aeroORDtaxitimes
 
@@ -94,7 +95,7 @@ python main.py
 
 ## Libraries Used
 
-- pandas (to analyze the OTP tables, and process the data for the algorithm)
+- pandas (to analyze the OTP tables and process the data for FOLD-SE)
 
 - requests (for FOLD-SE)
 
