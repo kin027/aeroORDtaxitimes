@@ -8,8 +8,8 @@ import requests
 from foldse_client import Foldse, split_data, get_scores
 
 SERVER = "https://foldse-server.onrender.com"
-RAW_FILE = "data/combined_otp.csv"  # Cleaned source dataset
-CSV_FILE = "prepared/cleaned_otp.csv"  # Clean CSV created in step 1
+RAW_FILE = "data/cleaned_otp.csv"  # Cleaned source dataset
+CSV_FILE = "prepared/final_otp.csv"  # Clean CSV created in step 1
 LABEL = "long_taxi_in"  # Target column name
 POS_VAL = "True"  # Positive class to describe (taxi_in > 14m)
 RATIO = 0.5  # Same meaning as in FOLD-R++
