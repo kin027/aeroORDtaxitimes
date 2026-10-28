@@ -12,7 +12,7 @@ I'm an avgeek (aviation enthusiast) and data nerd. At the conclusion of each fli
 
 Unfortunately, that's the reality at Chicago-O'Hare International Airport (ORD), where it's very possible to [literally taxi in a circle around the terminals](https://www.reddit.com/r/unitedairlines/comments/1w146zy/satisfying_full_loop_and_then_some_getting_your/). ORD is infamous among the frequent flyers for its ridiculously long taxi times.
 
-So, when I first learned about the FOLD-SE algorithm, I knew I had to try it out on the BTS's Airline On-Time Performance (OTP) data to explore the combination of factors that could cause an arrival into ORD to have a long taxi, **which I defined in the program as being longer than 14 minutes**.
+So, when I first learned about the FOLD-SE algorithm, I knew I had to try it out on the BTS's Airline On-Time Performance (OTP) data to explore the combination of factors that could cause an arrival into ORD to have a long taxi, **which I defined in the program as being greater than 14 minutes**.
 
 ### Key Insights
 
@@ -58,10 +58,7 @@ I'm particularly interested in the `wheels_on_to_crs_arr_time(X,N3), not(N3=<12.
 
 There are more rules beyond this, and I suppose they would be helpful in informing you when booking your next connection through ORD, so you can keep your taxi times down. Or, if you're like me, to maximize your chance of experiencing the _Tour de O'Hare_ yourself, because a taxi in to a gate there can be a big ORDeal... ✈️
 
-<details>
-<summary> 
-<h2 style="display: inline;"> Getting Started </h2>
-</summary>
+## Getting Started
 
 Have Python 3.13+ installed on your machine. You do not need to download any data, as I've already included the relevant data in this repo.
 
@@ -73,15 +70,13 @@ cd aeroORDtaxitimes
 # Create the virtual environment
 python -m venv venv
 
-# Activate it
-
-# On macOS and Linux
+# Activate it on macOS and Linux
 source venv/bin/activate
 
-# On Windows (Command Prompt)
+# Activate it on Windows (Command Prompt)
 venv\Scripts\activate
 
-# On Windows (PowerShell)
+# Activate it on Windows (PowerShell)
 .\venv\Scripts\Activate.ps1
 
 # Install dependencies
@@ -91,12 +86,7 @@ pip install -r requirements.txt
 python main.py
 ```
 
-</details>
-
-<details>
-<summary> 
-<h2 style="display: inline;"> Libraries Used </h2>
-</summary>
+## Libraries Used
 
 - pandas (to analyze the OTP tables and process the data for FOLD-SE)
 
@@ -104,51 +94,26 @@ python main.py
 
 - cryptography (for FOLD-SE)
 
-</details>
+## Data Sources
 
-<details>
-<summary> 
-<h2 style="display: inline;"> Data Sources </h2>
-</summary>
+- [BTS Airline On-Time Performance Data, Reporting Carrier On-Time Performance (1987-present)](https://www.transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD&Yv0x=D)
+  - Contains scheduled and actual departure and arrival times reported by certified U.S. air carriers that account for at least half of one percent of domestic scheduled passenger revenues
+  - Released monthly with a 2-3 month lag
+  - I used data from January 2025 to December 2025
 
-I downloaded data from the Bureau of Transportation Statistics (BTS), a part of the U.S. Department of Transportation. Airlines report their on-time performance data to the BTS each month.
-
-- [BTS Reporting Carrier On-Time Performance (1987-present) table](https://www.transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD&Yv0x=D)
-  - Provides detailed on-time performance info for every domestic scheduled passenger flight in the U.S.
-  - Released monthly with a 2-3 month lag to ensure data quality
-  - I included the Year, Month, DayOfWeek, IATA_CODE_Reporting_Airline, Tail_Number, Dest, DepDelay, WheelsOn, TaxiIn, CRSArrTime, Cancelled, Diverted, and Distance columns and used data from January 2025 to December 2025
-
-</details>
-
-<details>
-<summary> 
-<h2 style="display: inline;"> Limitations </h2>
-</summary>
+## Limitations
 
 - The data does not include two important features: arrival runway and arrival terminal
   - So those cannot be generated as predicates
   - (If you land on runway 9L/27R, you might want to get another movie ready, though...)
 
-- The OTP tables include only U.S. domestic flights
-  - So my analysis evaluates U.S. domestic flights only
+## Future Improvement Plans
 
-</details>
+- Finding a reliable dataset to join on the tail numbers column in the OTP data for ICAO aircraft types to use that as a feature
 
-<details>
-<summary> 
-<h2 style="display: inline;"> Future Improvement Plans </h2>
-</summary>
+- Including some graphs about ORD taxi times just for kicks
 
-- Using the aircraft registration column in the OTP data to get ICAO aircraft types to use that as a feature
-
-</details>
-
-<details>
-<summary> 
-<h2 style="display: inline;"> References </h2>
-</summary>
+## References
 
 - Wang & Gupta, _FOLD-SE: an efficient rule-based machine learning algorithm with scalable explainability_, PADL 2024.
   - Code: https://github.com/hwd404/foldse_client
-
-</details>
