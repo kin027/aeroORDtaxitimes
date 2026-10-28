@@ -58,10 +58,10 @@ I'm particularly interested in the `wheels_on_to_crs_arr_time(X,N3), not(N3=<12.
 
 There are more rules beyond this, and I suppose they would be helpful in informing you when booking your next connection through ORD, so you can keep your taxi times down. Or, if you're like me, to maximize your chance of experiencing the _Tour de O'Hare_ yourself, because a taxi in to a gate there can be a big ORDeal... ✈️
 
-## Getting Started
-
 <details>
-<summary>Setup and execution instructions</summary>
+<summary> 
+<h2 style="display: inline;"> Getting Started </h2>
+</summary>
 
 Have Python 3.13+ installed on your machine. You do not need to download any data, as I've already included the relevant data in this repo.
 
@@ -93,7 +93,10 @@ python main.py
 
 </details>
 
-## Libraries Used
+<details>
+<summary> 
+<h2 style="display: inline;"> Libraries Used </h2>
+</summary>
 
 - pandas (to analyze the OTP tables and process the data for FOLD-SE)
 
@@ -101,7 +104,12 @@ python main.py
 
 - cryptography (for FOLD-SE)
 
-## Data Sources
+</details>
+
+<details>
+<summary> 
+<h2 style="display: inline;"> Data Sources </h2>
+</summary>
 
 I downloaded data from the Bureau of Transportation Statistics (BTS), a part of the U.S. Department of Transportation. Airlines report their on-time performance data to the BTS each month.
 
@@ -110,7 +118,12 @@ I downloaded data from the Bureau of Transportation Statistics (BTS), a part of 
   - Released monthly with a 2-3 month lag to ensure data quality
   - I included the Year, Month, DayOfWeek, IATA_CODE_Reporting_Airline, Tail_Number, Dest, DepDelay, WheelsOn, TaxiIn, CRSArrTime, Cancelled, Diverted, and Distance columns and used data from January 2025 to December 2025
 
-## Limitations
+</details>
+
+<details>
+<summary> 
+<h2 style="display: inline;"> Limitations </h2>
+</summary>
 
 - The data does not include two important features: arrival runway and arrival terminal
   - So those cannot be generated as predicates
@@ -119,11 +132,23 @@ I downloaded data from the Bureau of Transportation Statistics (BTS), a part of 
 - The OTP tables include only U.S. domestic flights
   - So my analysis evaluates U.S. domestic flights only
 
-## Future Improvement Plans
+</details>
+
+<details>
+<summary> 
+<h2 style="display: inline;"> Future Improvement Plans </h2>
+</summary>
 
 - Using the aircraft registration column in the OTP data to get ICAO aircraft types to use that as a feature
 
-## References
+</details>
+
+<details>
+<summary> 
+<h2 style="display: inline;"> References </h2>
+</summary>
 
 - Wang & Gupta, _FOLD-SE: an efficient rule-based machine learning algorithm with scalable explainability_, PADL 2024.
   - Code: https://github.com/hwd404/foldse_client
+
+</details>
