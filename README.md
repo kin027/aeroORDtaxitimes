@@ -96,7 +96,7 @@ python main.py
 
 ## Data Sources
 
-- [BTS Airline On-Time Performance Data, Reporting Carrier On-Time Performance (1987-present)](https://www.transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD&Yv0x=D)
+- [BTS, Airline On-Time Performance Data, Reporting Carrier On-Time Performance (1987-present)](https://www.transtats.bts.gov/DatabaseInfo.asp?QO_VQ=EFD&Yv0x=D)
   - Contains scheduled and actual departure and arrival times reported by certified U.S. air carriers that account for at least half of one percent of domestic scheduled passenger revenues
   - Released monthly with a 2-3 month lag
   - I used data from January 2025 to December 2025
