@@ -107,6 +107,9 @@ python main.py
   - So those cannot be generated as predicates
   - (If you land on runway 9L/27R, you might want to get another movie ready, though...)
 
+- The OTP tables include only U.S. domestic flights operated by U.S. carriers
+  - So international flights, which tend to arrive at the less-busy Terminal 5 at ORD, are excluded
+
 ## Future Improvement Plans
 
 - Finding a reliable dataset to join on the tail numbers column in the OTP data for ICAO aircraft types to use that as a feature
