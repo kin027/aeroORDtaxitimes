@@ -1,7 +1,7 @@
 # ======================================================================
 # STEP 0: Imports and settings
 # ======================================================================
-import os, sys, time
+import os, time
 import pandas as pd
 import requests
 
@@ -12,9 +12,9 @@ RAW_FILE = "data/cleaned_otp.csv"  # Cleaned source dataset
 CSV_FILE = "prepared/final_otp.csv"  # Clean CSV created in step 1
 LABEL = "long_taxi_in"  # Target column name
 POS_VAL = "True"  # Positive class to describe (taxi_in > 14m)
-RATIO = 0.5  # Same meaning as in FOLD-R++
+RATIO = 0.5
 TAIL = 5e-3  # Stopping / pruning threshold
-SAMPLE_SIZE = 150000  # Prevents Render 502 Bad Gateway / OOM
+SAMPLE_SIZE = 150000
 
 
 # ======================================================================
@@ -31,7 +31,8 @@ def prepare_otp():
     # Take a stratified sample of the data
     if len(df) > SAMPLE_SIZE:
         print(
-            f"Taking a stratified sample of {SAMPLE_SIZE} rows from {len(df)} for FOLD-SE"
+            f"Taking a stratified random sample of {SAMPLE_SIZE} out of {len(df)} "
+            f"rows for FOLD-SE"
         )
         frac = SAMPLE_SIZE / len(df)
         df = (
@@ -98,7 +99,8 @@ def train_model(model, train):
             t = time.time()
             model.fit(train, ratio=RATIO, tail=TAIL)
             print(
-                f"done in {time.time() - t:.1f}s wall  (server training: {model.training_seconds:.1f}s)"
+                f"done in {time.time() - t:.1f}s wall  (server training: "
+                f"{model.training_seconds:.1f}s)"
             )
             return True
         except Exception as e:
